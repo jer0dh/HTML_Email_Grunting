@@ -23,3 +23,5 @@ The default task does it all.
  3. run the default grunt task
  4. Copy the preInlined.html file it creates and use Zurb Ink inliner to inline the styles.  Paste the product into the email.html file.  Unfortunately, there currently isn't a great inliner for the Windows machine so I still must copy&paste.
  5. run 'grunt zip' to zip up your images folder and the email.html file and send to EmailOnAcid or Litmus for testing.
+
+Special Thanks to Victor Garcia's article [A workflow for responsive emails using Ink and Grunt](https://medium.com/@victorgarcia/a-workflow-for-responsive-emails-using-ink-and-grunt-32d607879082)
