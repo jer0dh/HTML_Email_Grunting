@@ -1,0 +1,26 @@
+{
+  "name": "grunting",
+  "version": "1.0.0",
+  "description": "Base to start a responsive email with Zurb ink",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "zurb",
+    "ink",
+    "responsive",
+    "email",
+    "campaign"
+  ],
+  "author": "Jerod Hammerstein",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-compress": "^0.13.0",
+    "grunt-processhtml": "^0.3.8",
+    "grunt-strip-css-comments": "^1.2.0",
+    "grunt-text-replace": "^0.4.0",
+    "grunt-uncss": "^0.4.3"
+  }
+}
