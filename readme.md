@@ -25,5 +25,7 @@ The default task does it all.
  5. run `grunt zip` to zip up your images folder and the email.html file and send to EmailOnAcid or Litmus for testing.
 
 Special Thanks to Victor Garcia's article [A workflow for responsive emails using Ink and Grunt](https://medium.com/@victorgarcia/a-workflow-for-responsive-emails-using-ink-and-grunt-32d607879082)
+
 Check out the awesome Zurb's Ink: [A framework for Responsive HTML email](http://zurb.com/ink/)
-Check out CodeSchool's [Unmaksing HTML Emails course](http://campus.codeschool.com/courses/unmasking-html-emails) (Does use Ink but very helpful!)
+
+Check out CodeSchool's [Unmaksing HTML Emails course](http://campus.codeschool.com/courses/unmasking-html-emails) (Does not' use Ink but very helpful!)
