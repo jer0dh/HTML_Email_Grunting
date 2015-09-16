@@ -57,6 +57,13 @@ module.exports = function(grunt) {
 				]
 			}
 		},
+		exec: {
+			inline: {
+				command: 'gulp',
+				stdout: true
+			}
+
+		},
 		watch: {
 			js: {
 				files: ['source.html', 'my_styles.css'],
@@ -73,10 +80,12 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-processhtml');
 	grunt.loadNpmTasks('grunt-strip-css-comments');
 	grunt.loadNpmTasks('grunt-text-replace');
-	grunt.loadNpmTasks('grunt-contrib-compress')
+	grunt.loadNpmTasks('grunt-contrib-compress');
+	grunt.loadNpmTasks('grunt-exec');
+
 	grunt.registerTask('emptyFile', 'Removes Inlined file', function() {
 		grunt.file.write('email.html', '');
 	});
-	grunt.registerTask('default', ['uncss', 'stripCssComments','replace:css','processhtml', 'replace:html','emptyFile']);
+	grunt.registerTask('default', ['uncss', 'stripCssComments','replace:css','processhtml', 'replace:html','exec:inline','compress']);
 	grunt.registerTask('zip', ['compress']);
 };

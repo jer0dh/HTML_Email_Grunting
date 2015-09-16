@@ -18,9 +18,12 @@
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-compress": "^0.13.0",
+    "grunt-exec": "^0.4.6",
     "grunt-processhtml": "^0.3.8",
     "grunt-strip-css-comments": "^1.2.0",
     "grunt-text-replace": "^0.4.0",
-    "grunt-uncss": "^0.4.3"
+    "grunt-uncss": "^0.4.3",
+    "gulp-inline-css": "^2.0.0",
+    "gulp-rename": "^1.2.2"
   }
 }
