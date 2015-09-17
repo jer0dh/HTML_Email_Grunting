@@ -26,12 +26,20 @@ The default task does it all.
  4. Send the `email.zip` file to EmailOnAcid or Litmus for testing.
 
  ## Notes ##
-I haven't tested this with a new project yet so I'm unsure of how will the inliner is compared to Zurb Ink's inliner or the premailer inliner.  If there is an issue
+
+ Make sure your full file paths do not contain spaces otherwise uncss will fail.
+
+I haven't tested this with a new project yet so I'm unsure of how well the inliner is compared to Zurb Ink's inliner or the premailer inliner.  If there is an issue
 One can use the `preInlined.html` file it creates and use Zurb Ink inliner to inline the styles.  Paste the produced code into the email.html file and then run grunt zip
 to create the `email.zip` file.
 
 When I first started this, I was hoping to do everything with grunt, but had to add a gulp task for the inliner for Windows machines.
 
+## Update ##
+Ok.  Worked with this on a project.  Finding that there are differences between the gulp-inliner-css and the Zurb Ink inliner.  Unfortunately, the Zurb
+Inliner appears to give me better results during my Email On Acid testing.  So for now, run `grunt`, copy and paste preInlined.html into Zurb's Inliner, then paste results to email.html, and finally, run `grunt zip`
+
+## Thanks ##
 Special Thanks to Victor Garcia's article [A workflow for responsive emails using Ink and Grunt](https://medium.com/@victorgarcia/a-workflow-for-responsive-emails-using-ink-and-grunt-32d607879082)
 
 Thanks to JonKemp for making [gulp-inline-css](https://www.npmjs.com/package/gulp-inline-css)
