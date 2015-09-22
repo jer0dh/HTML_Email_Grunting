@@ -14,24 +14,32 @@ module.exports = function(grunt) {
 			}
 
 		},
+		concat_css: {
+			all: {
+				src: ["./css/*.css"],
+				dest: 'working/styles.css'
+			}
+
+		},
 		processhtml: {
 			dist: {
 				files: {
-					'preInlined.html' : ['source.html']
+					'preInlined.html' : ['working/source-tmp.html']
 				}
 			}
 		},
+
 		stripCssComments: {
 			dist: {
 				files: {
-					'working/verytidy.css': 'working/tidy.css'
+					'working/styles.css': 'working/styles.css'
 				}
 			}
 		},
 		replace: {
 			css: {
-				src: ['working/verytidy.css'],             // source files array (supports minimatch)
-				dest: 'working/veryverytidy.css',             // destination directory or file
+				src: ['working/styles.css'],             // source files array (supports minimatch)
+				overwrite:true,            // destination directory or file
 				replacements: [{
 					from: /^\s*$/gm,      // regex remove extra lines
 					to: ''
@@ -64,10 +72,67 @@ module.exports = function(grunt) {
 			}
 
 		},
+
+
+		mergeData : grunt.file.exists('mergeData.json')? grunt.file.readJSON('mergeData.json') : null,
+
+		hideTemplate: {
+			main: {
+				src: ['source.html'],
+				dest: 'working/source-tmp.html'
+			}
+		},
+		showTemplate: {
+			main: {
+				src: ['email.html'],
+				dest: 'working/email-tmp.html'
+			}
+		},
+		merget: {
+			main: {
+				src: ['working/email-tmp.html'],
+				dest: '.'
+			}
+		},
+		helpers : {
+			filename: function(f) {
+				filename = f.toLowerCase();
+				filename = filename.replace(/\s/g, '');
+				filename = filename.replace('&', 'and');
+				return filename;
+			},
+			fixupMergeData: function(data) {
+
+				data.tel = data.phone.replace(/-/g,'');
+				data.tel = data.tel.match(/\d{10,10}/)[0];
+				return data;
+			}
+		},
+		postcss: {
+			options: {
+				//map: true, // inline sourcemaps
+
+				// or
+				map: {
+					inline: false, // save all sourcemaps as separate files...
+					annotation: './css/maps/' // ...to the specified directory
+				},
+
+				processors: [
+					require('postcss-simple-vars')({silent:true})
+				]
+			},
+			dist: {
+				src: 'css/*.scss',
+				dest: 'css/my_styles.css'
+
+			}
+		},
+
 		watch: {
-			js: {
-				files: ['source.html', 'my_styles.css'],
-				tasks: ['uncss', 'processhtml'],
+			css: {
+				files: ['css/my_styles.scss'],
+				tasks: ['postcss'],
 				options: {
 					spawn: false
 				}
@@ -82,10 +147,55 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-text-replace');
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-exec');
+	grunt.loadNpmTasks('grunt-concat-css');
+	grunt.loadNpmTasks('grunt-postcss');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+
+	grunt.registerMultiTask('hideTemplate','Converts template tags to prevent inliner from messing with them', function () {
+		var data = this.data;
+		src = grunt.file.read(data.src);
+		var content = src.replace(/<%/gm,'&lt;%');
+		content = content.replace(/%>/gm, '%&gt;');
+		grunt.file.write(data.dest, content);
+		grunt.log.writeln('File "' + data.dest + '" created.');
+
+	});
+	grunt.registerMultiTask('showTemplate','Puts template tags back the way they were', function () {
+		var data = this.data;
+		src = grunt.file.read(data.src);
+		var content = src.replace(/&lt;%/gm,'<%');
+		content = content.replace(/%&gt;/gm, '%>');
+		grunt.file.write(data.dest, content);
+		grunt.log.writeln('File "' + data.dest + '" created.');
+
+	});
+	grunt.registerMultiTask('merget', 'Merges data with source using grunt templates', function() {
+		var data = this.data,
+			mergeData = grunt.config('mergeData'),
+			helpers = grunt.config('helpers'),
+			src = grunt.file.read(data.src);
+		    if (mergeData !== null) {
+				mergeData.forEach(function (c) {
+					if (typeof c.filename === 'undefined') {
+						c.filename = helpers.filename(c.company);
+					}
+					var p = data.dest + '/i-' + c.filename + '.html';
+					c = helpers.fixupMergeData(c);
+					grunt.file.write(p, grunt.template.process(src, {data: c}));
+					grunt.log.writeln('File "' + p + '" created.');
+				});
+			} else {
+				grunt.log.writeln('No data found to merge.')
+			}
+	});
+
+
 
 	grunt.registerTask('emptyFile', 'Removes Inlined file', function() {
 		grunt.file.write('email.html', '');
 	});
-	grunt.registerTask('default', ['uncss', 'stripCssComments','replace:css','processhtml', 'replace:html','exec:inline','compress']);
+
+	grunt.registerTask('default', ['hideTemplate', 'postcss', 'concat_css', 'stripCssComments','replace:css','processhtml','emptyFile']);
+    grunt.registerTask('merge',['showTemplate', 'merget']);
 	grunt.registerTask('zip', ['compress']);
 };
