@@ -2,8 +2,18 @@ $blue :#554fe0;
 $red : #444e44;
 a {
   color: $blue;
+  line-height: 1;
 }
 
+p,td,div,a {
+  -moz-hyphens:none;
+  -ms-hyphens:none;
+  -webkit-hyphens: none;
+  hyphens:none;
+}
+p,td,div,a {
+  word-break:keep-all;
+}
 
 /* Firefox display hack */
 @media only screen and (max-width: 600px) {

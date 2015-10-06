@@ -1,4 +1,4 @@
-// See: http://24ways.org/2013/grunt-is-not-weird-and-hard/
+
 module.exports = function(grunt) {
 
 	grunt.initConfig({
@@ -6,21 +6,24 @@ module.exports = function(grunt) {
 
 		uncss: {
 			dist: {
-				src: ['source.html'],
-				dest: 'working/tidy.css',
+				files: {
+					'working/tidy.css' : ['source.html']
+				},
 				options: {
-					report: 'min' //optional: include to report savings
+					report: 'min', //optional: include to report savings
+					ignore: ['#outlook a', '.ExternalClass', '#backgroundTable', '.ExternalClass p',
+					'.ExternalClass span', '.ExternalClass font', '.ExternalClass td', '.ExternalClass div']
 				}
 			}
 
 		},
-		concat_css: {
+/*		concat_css: {
 			all: {
-				src: ["./css/*.css"],
+				src: ["./css/!*.css"],
 				dest: 'working/styles.css'
 			}
 
-		},
+		},*/
 		processhtml: {
 			dist: {
 				files: {
@@ -32,26 +35,18 @@ module.exports = function(grunt) {
 		stripCssComments: {
 			dist: {
 				files: {
-					'working/styles.css': 'working/styles.css'
+					'working/tidy.css': 'working/tidy.css'
 				}
 			}
 		},
 		replace: {
 			css: {
-				src: ['working/styles.css'],             // source files array (supports minimatch)
+				src: ['working/tidy.css'],             // source files array (supports minimatch)
 				overwrite:true,            // destination directory or file
 				replacements: [{
 					from: /^\s*$/gm,      // regex remove extra lines
 					to: ''
 				}]
-			},
-			html: {
-				src: ['preInlined.html'],
-				overwrite: true,
-				replacements: [{
-						from: '<table',
-						to: '<table border="0" cellpadding="0" cellspacing="0"'
-					}]
 			}
 		},
 		compress: {
@@ -65,14 +60,6 @@ module.exports = function(grunt) {
 				]
 			}
 		},
-		exec: {
-			inline: {
-				command: 'gulp',
-				stdout: true
-			}
-
-		},
-
 
 		mergeData : grunt.file.exists('mergeData.json')? grunt.file.readJSON('mergeData.json') : null,
 
@@ -108,6 +95,15 @@ module.exports = function(grunt) {
 				return data;
 			}
 		},
+		premailer: {
+			simple: {
+				options: {},
+				files: {
+					'email.html' : ['preInlined.html']
+				}
+			}
+
+		},
 		postcss: {
 			options: {
 				//map: true, // inline sourcemaps
@@ -128,7 +124,13 @@ module.exports = function(grunt) {
 
 			}
 		},
-
+		tableAttrib: {
+		    main :
+		{
+			src: 'working/source-tmp.html',
+			dest: 'working/source-tmp.html'
+		}
+		},
 		watch: {
 			css: {
 				files: ['css/my_styles.scss'],
@@ -146,10 +148,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-strip-css-comments');
 	grunt.loadNpmTasks('grunt-text-replace');
 	grunt.loadNpmTasks('grunt-contrib-compress');
-	grunt.loadNpmTasks('grunt-exec');
 	grunt.loadNpmTasks('grunt-concat-css');
 	grunt.loadNpmTasks('grunt-postcss');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-premailer');
 
 	grunt.registerMultiTask('hideTemplate','Converts template tags to prevent inliner from messing with them', function () {
 		var data = this.data;
@@ -168,6 +170,29 @@ module.exports = function(grunt) {
 		grunt.file.write(data.dest, content);
 		grunt.log.writeln('File "' + data.dest + '" created.');
 
+	});
+	grunt.registerMultiTask('tableAttrib', 'Checks table tags to add default border, cellpadding, etc', function() {
+		var data=this.data;
+		src = grunt.file.read(data.src);
+		var count = 0, border= 0, cellspacing= 0, cellpadding=0;
+		var content = src.replace(/<table(.*)>/gm, function(match,p1){
+			if (p1.match(/border=/i) == null) {
+				p1 += ' border="0"';
+				border += 1;
+			}
+			if (p1.match(/cellspacing=/i)== null) {
+				p1 += ' cellspacing="0"';
+				cellspacing += 1;
+			}
+			if (p1.match(/cellpadding=/i) == null) {
+				p1 += ' cellpadding="0"';
+				cellpadding += 1;
+			}
+			count += 1;
+			return '<table' + p1 + '>';
+		});
+		grunt.file.write(data.dest, content);
+		grunt.log.writeln(count + ' tables found. '+ border +' border added. '+ cellpadding + ' cellpadding added. ' + cellspacing + ' cellspacing added. File "' + data.dest + '" created.');
 	});
 	grunt.registerMultiTask('merget', 'Merges data with source using grunt templates', function() {
 		var data = this.data,
@@ -195,7 +220,8 @@ module.exports = function(grunt) {
 		grunt.file.write('email.html', '');
 	});
 
-	grunt.registerTask('default', ['hideTemplate', 'postcss', 'concat_css', 'stripCssComments','replace:css','processhtml','emptyFile']);
+	grunt.registerTask('default', ['hideTemplate', 'postcss', 'uncss', 'stripCssComments','replace:css','tableAttrib','processhtml','premailer']);
     grunt.registerTask('merge',['showTemplate', 'merget']);
 	grunt.registerTask('zip', ['compress']);
+	grunt.registerTask('inline', ['premailer']);
 };

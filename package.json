@@ -20,14 +20,12 @@
     "grunt-concat-css": "^0.3.1",
     "grunt-contrib-compress": "^0.13.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-exec": "^0.4.6",
     "grunt-postcss": "^0.6.0",
+    "grunt-premailer": "^0.2.13",
     "grunt-processhtml": "^0.3.8",
     "grunt-strip-css-comments": "^1.2.0",
     "grunt-text-replace": "^0.4.0",
     "grunt-uncss": "^0.4.3",
-    "gulp": "^3.9.0",
-    "gulp-inline-css": "^2.0.0",
-    "gulp-rename": "^1.2.2"
+    "postcss-simple-vars": "^1.0.1"
   }
 }
