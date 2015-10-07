@@ -54,7 +54,8 @@ Not sure if it is an issue with Virtualbox, Vagrant, or PHPStorm on Windows, but
 not great.  So I setup a macro and keyboard shortcut in PHPStorm that Saves All and runs a Synchronization.  Sometimes you have to
 run the shortcut twice as any watch tasks may not complete before the synchronization runs.
 
-An initial run of `vagrant up` may need to be run using a command terminal Run as Administrator to create the symlinked node_modules folder... Maybe
+An initial run of `vagrant up` may need to be run using a command terminal Run as Administrator to create the symlinked node_modules folder.
+If not, one can run the command in the vagrantfile to create the symlink
 
 
 * source.html - Here is where you type in the HTML for the email using the Zurb Ink framework

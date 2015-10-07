@@ -87,15 +87,21 @@ Vagrant.configure(2) do |config|
 	sudo ln -s /home/vagrant/node_modules /vagrant/node_modules
 
     # fix for grunt-uncss issue
-    sudo apt-get install libfontconfig
+    sudo apt-get install -y libfontconfig
 
-	 # installing these in this provisioner shell causes errors when running the premailer
-	     # sudo /opt/vagrant_ruby/bin/gem install premailer
-         # sudo /opt/vagrant_ruby/bin/gem install hpricot
+    #Really upgrade node
+             sudo npm cache clean -f
+             sudo npm install -g n
+             sudo n stable
+             hash -r
+
+	 # installing these in this provisioner shell causes errors when running the premailer.  Run after sshing into it.
+	     # sudo gem install premailer
+         # sudo gem install hpricot
 
      # postcss-simple-vars complaining on 0.10 version of node.
-     # next time try hash -r to clear out BASH cache
-     # if not, try
+
+     #Moving this into script to see if it works okay...upgrades node to latest.
          #sudo npm cache clean -f
          #sudo npm install -g n
          #sudo n stable
