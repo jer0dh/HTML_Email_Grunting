@@ -105,8 +105,10 @@ Check out the awesome Zurb's Ink: [A framework for Responsive HTML email](http:/
 Check out CodeSchool's [Unmasking HTML Emails course](http://campus.codeschool.com/courses/unmasking-html-emails) (Does not' use Ink but very helpful!)
 
 ## Change Log ##
+### 20151008 ###
+ * added grunt-html-validation
 
-20151006
+### 20151006 ###
  * Added Vagrant file.
    * Added provision script to update nodejs and ruby (see file for commands to run after provisioned)
  * Removed gulp as the inliner just wasn't working for me (states like :active, :visited were not left in styles)

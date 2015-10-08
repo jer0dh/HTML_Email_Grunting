@@ -131,6 +131,34 @@ module.exports = function(grunt) {
 			dest: 'working/source-tmp.html'
 		}
 		},
+		validation: {
+			email: {
+				options: {
+					reset: grunt.option('reset') || false,
+					stoponerror: false,
+					relaxerror: ['Bad value X-UA-Compatible for attribute http-equiv on element meta.',
+						"element \"center\" undefined",
+						"there is no attribute \"style\"",
+						"there is no attribute \"align\"" ] //ignores these errors
+				},
+				files: {
+					src: ['email.html']
+				}
+			},
+			source: {
+				options: {
+					reset: true, // grunt.option('reset') || false,
+					stoponerror: false,
+					relaxerror: ['Bad value X-UA-Compatible for attribute http-equiv on element meta.',
+						"element \"center\" undefined",
+						"there is no attribute \"style\"",
+						"there is no attribute \"align\"" ] //ignores these errors
+				},
+				files: {
+					src: ['source.html']
+				}
+			}
+		},
 		watch: {
 			css: {
 				files: ['css/my_styles.scss'],
@@ -152,6 +180,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-postcss');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-premailer');
+	grunt.loadNpmTasks('grunt-html-validation');
 
 	grunt.registerMultiTask('hideTemplate','Converts template tags to prevent inliner from messing with them', function () {
 		var data = this.data;
@@ -220,8 +249,9 @@ module.exports = function(grunt) {
 		grunt.file.write('email.html', '');
 	});
 
-	grunt.registerTask('default', ['hideTemplate', 'postcss', 'uncss', 'stripCssComments','replace:css','tableAttrib','processhtml','premailer']);
+	grunt.registerTask('default', ['hideTemplate', 'postcss', 'uncss', 'stripCssComments','replace:css','tableAttrib','processhtml','premailer','zip','validation:email']);
     grunt.registerTask('merge',['showTemplate', 'merget']);
 	grunt.registerTask('zip', ['compress']);
 	grunt.registerTask('inline', ['premailer']);
+	grunt.registerTask('validate', ['validation:source']);
 };
